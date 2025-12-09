@@ -1,4 +1,4 @@
-name: myproject_platform_app
+name: sky_property_app
 description: A simple Flutter app that displays a splash screen and opens a configurable URL in an in-app browser.
 
 publish_to: 'none'
