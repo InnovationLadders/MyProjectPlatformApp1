@@ -12,6 +12,15 @@ void main() async {
 
   final deviceInfo = await DeviceInfoService().getDeviceInfo();
 
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
+
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
   FlutterError.onError = (FlutterErrorDetails details) async {
     FlutterError.presentError(details);
     await ErrorLoggerService().logError(
@@ -24,16 +33,6 @@ void main() async {
 
   runZonedGuarded(
     () {
-
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-    DeviceOrientation.landscapeLeft,
-    DeviceOrientation.landscapeRight,
-  ]);
-
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
       runApp(const MyApp());
     },
     (error, stackTrace) async {
