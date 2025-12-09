@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../models/app_config.dart';
 
 class WebViewScreen extends StatefulWidget {
@@ -12,48 +12,32 @@ class WebViewScreen extends StatefulWidget {
 }
 
 class _WebViewScreenState extends State<WebViewScreen> {
-  late final WebViewController _controller;
+  InAppWebViewController? _webViewController;
   bool _isLoading = true;
   String? _errorMessage;
+  double _progress = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    _initializeWebView();
-  }
-
-  void _initializeWebView() {
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageStarted: (String url) {
-            setState(() {
-              _isLoading = true;
-              _errorMessage = null;
-            });
-          },
-          onPageFinished: (String url) {
-            setState(() {
-              _isLoading = false;
-            });
-          },
-          onWebResourceError: (WebResourceError error) {
-            setState(() {
-              _isLoading = false;
-              _errorMessage = 'Failed to load page: ${error.description}';
-            });
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse(widget.config.url));
-  }
+  final InAppWebViewSettings _settings = InAppWebViewSettings(
+    javaScriptEnabled: true,
+    javaScriptCanOpenWindowsAutomatically: true,
+    mediaPlaybackRequiresUserGesture: false,
+    useHybridComposition: true,
+    useShouldOverrideUrlLoading: false,
+    allowFileAccessFromFileURLs: true,
+    allowUniversalAccessFromFileURLs: true,
+    cacheEnabled: true,
+    domStorageEnabled: true,
+    databaseEnabled: true,
+    clearCache: false,
+    mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
+    supportMultipleWindows: true,
+  );
 
   Future<void> _refreshPage() async {
     setState(() {
       _errorMessage = null;
     });
-    await _controller.reload();
+    await _webViewController?.reload();
   }
 
   @override
@@ -100,24 +84,58 @@ class _WebViewScreenState extends State<WebViewScreen> {
                 ),
               )
             else
-              RefreshIndicator(
-                onRefresh: _refreshPage,
-                child: WebViewWidget(controller: _controller),
+              InAppWebView(
+                initialUrlRequest: URLRequest(
+                  url: WebUri(widget.config.url),
+                ),
+                initialSettings: _settings,
+                onWebViewCreated: (controller) {
+                  _webViewController = controller;
+                },
+                onLoadStart: (controller, url) {
+                  setState(() {
+                    _isLoading = true;
+                    _errorMessage = null;
+                  });
+                },
+                onLoadStop: (controller, url) async {
+                  setState(() {
+                    _isLoading = false;
+                  });
+                },
+                onProgressChanged: (controller, progress) {
+                  setState(() {
+                    _progress = progress / 100;
+                  });
+                },
+                onLoadError: (controller, url, code, message) {
+                  setState(() {
+                    _isLoading = false;
+                    _errorMessage = 'Failed to load page: $message';
+                  });
+                },
+                onLoadHttpError: (controller, url, statusCode, description) {
+                  setState(() {
+                    _isLoading = false;
+                    _errorMessage = 'HTTP Error $statusCode: $description';
+                  });
+                },
               ),
             if (_isLoading && _errorMessage == null)
               Container(
                 color: Colors.white,
-                child: const Center(
+                child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1A7A9E)),
+                        value: _progress > 0 ? _progress : null,
+                        valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF1A7A9E)),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Text(
-                        'Loading...',
-                        style: TextStyle(
+                        _progress > 0 ? 'Loading ${(_progress * 100).toInt()}%' : 'Loading...',
+                        style: const TextStyle(
                           fontSize: 16,
                           color: Color(0xFF1A7A9E),
                         ),
