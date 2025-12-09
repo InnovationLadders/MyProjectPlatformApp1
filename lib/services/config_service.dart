@@ -17,7 +17,7 @@ class ConfigService {
       return _config!;
     } catch (e) {
       _config = AppConfig(
-        appName: 'sky property',
+        appName: 'SkyProperty',
         url: 'https://skypropertyksa.com',
       );
       return _config!;
