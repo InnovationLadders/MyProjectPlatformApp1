@@ -1,16 +1,9 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'screens/splash_screen.dart';
-import 'services/error_logger_service.dart';
-import 'services/device_info_service.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await ErrorLoggerService().initialize();
-
-  final deviceInfo = await DeviceInfoService().getDeviceInfo();
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -21,29 +14,7 @@ void main() async {
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-  FlutterError.onError = (FlutterErrorDetails details) async {
-    FlutterError.presentError(details);
-    await ErrorLoggerService().logError(
-      error: details.exceptionAsString(),
-      stackTrace: details.stack?.toString(),
-      deviceInfo: deviceInfo,
-      type: 'Flutter',
-    );
-  };
-
-  runZonedGuarded(
-    () {
-      runApp(const MyApp());
-    },
-    (error, stackTrace) async {
-      await ErrorLoggerService().logError(
-        error: error.toString(),
-        stackTrace: stackTrace.toString(),
-        deviceInfo: deviceInfo,
-        type: 'Zone',
-      );
-    },
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
