@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../models/app_config.dart';
+import '../services/error_logger_service.dart';
+import '../services/device_info_service.dart';
 
 class WebViewScreen extends StatefulWidget {
   final AppConfig config;
@@ -16,6 +18,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool _isLoading = true;
   String? _errorMessage;
   double _progress = 0;
+  final _errorLogger = ErrorLoggerService();
+  final _deviceInfo = DeviceInfoService();
+  String? _cachedDeviceInfo;
 
   final InAppWebViewSettings _settings = InAppWebViewSettings(
     javaScriptEnabled: true,
@@ -32,6 +37,25 @@ class _WebViewScreenState extends State<WebViewScreen> {
     mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
     supportMultipleWindows: true,
   );
+
+  @override
+  void initState() {
+    super.initState();
+    _initDeviceInfo();
+  }
+
+  Future<void> _initDeviceInfo() async {
+    _cachedDeviceInfo = await _deviceInfo.getDeviceInfo();
+  }
+
+  Future<void> _logWebViewError(String error, {String? url}) async {
+    final deviceInfo = _cachedDeviceInfo ?? await _deviceInfo.getDeviceInfo();
+    await _errorLogger.logError(
+      error: '$error${url != null ? ' (URL: $url)' : ''}',
+      deviceInfo: deviceInfo,
+      type: 'WebView',
+    );
+  }
 
   Future<void> _refreshPage() async {
     setState(() {
@@ -113,12 +137,26 @@ class _WebViewScreenState extends State<WebViewScreen> {
                     _isLoading = false;
                     _errorMessage = 'Failed to load page: $message';
                   });
+                  _logWebViewError(
+                    'Load Error (Code: $code): $message',
+                    url: url?.toString(),
+                  );
                 },
                 onLoadHttpError: (controller, url, statusCode, description) {
                   setState(() {
                     _isLoading = false;
                     _errorMessage = 'HTTP Error $statusCode: $description';
                   });
+                  _logWebViewError(
+                    'HTTP Error $statusCode: $description',
+                    url: url?.toString(),
+                  );
+                },
+                onReceivedError: (controller, request, error) {
+                  _logWebViewError(
+                    'Received Error (Code: ${error.type}): ${error.description}',
+                    url: request.url?.toString(),
+                  );
                 },
               ),
             if (_isLoading && _errorMessage == null)
