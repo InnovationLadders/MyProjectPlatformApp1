@@ -17,8 +17,8 @@ class ConfigService {
       return _config!;
     } catch (e) {
       _config = AppConfig(
-        appName: 'MyProject Platform',
-        url: 'https://myprojectplatform.com/projects',
+        appName: 'sky property',
+        url: 'https://skypropertyksa.com',
       );
       return _config!;
     }
