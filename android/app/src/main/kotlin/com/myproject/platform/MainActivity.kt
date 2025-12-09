@@ -1,4 +1,4 @@
-package com.myproject.platform
+package com.sky.propeertyksa
 
 import io.flutter.embedding.android.FlutterActivity
 
