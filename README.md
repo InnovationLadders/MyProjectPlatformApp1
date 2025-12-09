@@ -21,8 +21,8 @@ Edit `assets/config.json`:
 
 ```json
 {
-  "appName": "MyProject Platform",
-  "url": "https://myprojectplatform.com/projects"
+  "appName": "sky property",
+  "url": "https://skypropertyksa.com/projects"
 }
 ```
 
