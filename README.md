@@ -171,5 +171,5 @@ This project is open source and available for personal and commercial use.
 
 Current test setup:
 - **App Name**: sky property
-- **URL**: https://myprojectplatform.com/projects
+- **URL**: https://skypropertyksa.com
 - **Logo**: logo.png
