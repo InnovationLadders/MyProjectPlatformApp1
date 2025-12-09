@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../models/app_config.dart';
 import '../services/config_service.dart';
 import 'webview_screen.dart';
-import 'error_logs_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,8 +15,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   late Animation<double> _fadeAnimation;
   AppConfig? _config;
   bool _isLoading = true;
-  int _tapCount = 0;
-  DateTime? _lastTapTime;
 
   @override
   void initState() {
@@ -57,26 +54,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     }
   }
 
-  void _onLogoTap() {
-    final now = DateTime.now();
-
-    if (_lastTapTime != null && now.difference(_lastTapTime!).inSeconds > 2) {
-      _tapCount = 0;
-    }
-
-    _lastTapTime = now;
-    _tapCount++;
-
-    if (_tapCount >= 5) {
-      _tapCount = 0;
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const ErrorLogsScreen(),
-        ),
-      );
-    }
-  }
-
   @override
   void dispose() {
     _animationController.dispose();
@@ -93,14 +70,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              GestureDetector(
-                onTap: _onLogoTap,
-                child: Image.asset(
-                  'assets/images/logo.png',
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.contain,
-                ),
+              Image.asset(
+                'assets/images/logo.png',
+                width: 200,
+                height: 200,
+                fit: BoxFit.contain,
               ),
               const SizedBox(height: 30),
               if (_config != null)

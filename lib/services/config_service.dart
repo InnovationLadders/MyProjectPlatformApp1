@@ -10,18 +10,10 @@ class ConfigService {
       return _config!;
     }
 
-    try {
-      final String configString = await rootBundle.loadString('assets/config.json');
-      final Map<String, dynamic> configJson = json.decode(configString);
-      _config = AppConfig.fromJson(configJson);
-      return _config!;
-    } catch (e) {
-      _config = AppConfig(
-        appName: 'SkyProperty',
-        url: 'https://skypropertyksa.com',
-      );
-      return _config!;
-    }
+    final String configString = await rootBundle.loadString('assets/config.json');
+    final Map<String, dynamic> configJson = json.decode(configString);
+    _config = AppConfig.fromJson(configJson);
+    return _config!;
   }
 
   static AppConfig? get config => _config;

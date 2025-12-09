@@ -14,7 +14,6 @@ class WebViewScreen extends StatefulWidget {
 class _WebViewScreenState extends State<WebViewScreen> {
   InAppWebViewController? _webViewController;
   bool _isLoading = true;
-  String? _errorMessage;
   double _progress = 0;
 
   final InAppWebViewSettings _settings = InAppWebViewSettings(
@@ -33,13 +32,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
     supportMultipleWindows: true,
   );
 
-  Future<void> _refreshPage() async {
-    setState(() {
-      _errorMessage = null;
-    });
-    await _webViewController?.reload();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,81 +39,31 @@ class _WebViewScreenState extends State<WebViewScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            if (_errorMessage != null)
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.error_outline,
-                        size: 64,
-                        color: Colors.red,
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        _errorMessage!,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      const SizedBox(height: 30),
-                      ElevatedButton.icon(
-                        onPressed: _refreshPage,
-                        icon: const Icon(Icons.refresh),
-                        label: const Text('Retry'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1A7A9E),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 30,
-                            vertical: 15,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            else
-              InAppWebView(
-                initialUrlRequest: URLRequest(
-                  url: WebUri(widget.config.url),
-                ),
-                initialSettings: _settings,
-                onWebViewCreated: (controller) {
-                  _webViewController = controller;
-                },
-                onLoadStart: (controller, url) {
-                  setState(() {
-                    _isLoading = true;
-                    _errorMessage = null;
-                  });
-                },
-                onLoadStop: (controller, url) async {
-                  setState(() {
-                    _isLoading = false;
-                  });
-                },
-                onProgressChanged: (controller, progress) {
-                  setState(() {
-                    _progress = progress / 100;
-                  });
-                },
-                onLoadError: (controller, url, code, message) {
-                  setState(() {
-                    _isLoading = false;
-                    _errorMessage = 'Failed to load page: $message';
-                  });
-                },
-                onLoadHttpError: (controller, url, statusCode, description) {
-                  setState(() {
-                    _isLoading = false;
-                    _errorMessage = 'HTTP Error $statusCode: $description';
-                  });
-                },
+            InAppWebView(
+              initialUrlRequest: URLRequest(
+                url: WebUri(widget.config.url),
               ),
-            if (_isLoading && _errorMessage == null)
+              initialSettings: _settings,
+              onWebViewCreated: (controller) {
+                _webViewController = controller;
+              },
+              onLoadStart: (controller, url) {
+                setState(() {
+                  _isLoading = true;
+                });
+              },
+              onLoadStop: (controller, url) async {
+                setState(() {
+                  _isLoading = false;
+                });
+              },
+              onProgressChanged: (controller, progress) {
+                setState(() {
+                  _progress = progress / 100;
+                });
+              },
+            ),
+            if (_isLoading)
               Container(
                 color: Colors.white,
                 child: Center(
