@@ -119,7 +119,7 @@ lib/
 assets/
 ├── config.json               # App configuration
 └── images/
-    └── MyProject Platform Logo copy copy.png  # App logo
+    └── logo.png  # App logo
 ```
 
 ## Reusing This App
