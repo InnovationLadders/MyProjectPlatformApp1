@@ -21,7 +21,7 @@ Edit `assets/config.json`:
 
 ```json
 {
-  "appName": "sky property",
+  "appName": "SkyProperty",
   "url": "https://skypropertyksa.com/projects"
 }
 ```
