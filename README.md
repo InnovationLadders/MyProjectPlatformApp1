@@ -172,4 +172,4 @@ This project is open source and available for personal and commercial use.
 Current test setup:
 - **App Name**: MyProject Platform
 - **URL**: https://myprojectplatform.com/projects
-- **Logo**: MyProject Platform Logo copy copy.png
+- **Logo**: logo.png
