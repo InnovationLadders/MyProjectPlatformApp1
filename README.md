@@ -30,7 +30,7 @@ Edit `assets/config.json`:
 
 Replace the logo file at:
 ```
-assets/images/MyProject Platform Logo copy copy.png
+assets/images/logo.png
 ```
 
 After replacing the logo, update the reference in `pubspec.yaml` if the filename changes:
