@@ -170,6 +170,6 @@ This project is open source and available for personal and commercial use.
 ## Test Configuration
 
 Current test setup:
-- **App Name**: sky property
+- **App Name**: SkyProperty
 - **URL**: https://skypropertyksa.com
 - **Logo**: logo.png
