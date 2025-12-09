@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.myproject.platform"
+    namespace "com.sky.propertyksa"
     compileSdk 34
 
     compileOptions {
