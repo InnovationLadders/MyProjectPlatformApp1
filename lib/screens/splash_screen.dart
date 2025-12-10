@@ -15,6 +15,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   late Animation<double> _fadeAnimation;
   AppConfig? _config;
   bool _isLoading = true;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -32,24 +33,35 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   Future<void> _loadConfigAndNavigate() async {
     try {
+      debugPrint('Loading config...');
       final config = await ConfigService.loadConfig();
+      debugPrint('Config loaded: ${config.appName}, ${config.url}');
+
+      if (!mounted) return;
+
       setState(() {
         _config = config;
         _isLoading = false;
       });
 
-      await Future.delayed(const Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 2));
 
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => WebViewScreen(config: config),
-          ),
-        );
-      }
-    } catch (e) {
+      if (!mounted) return;
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => WebViewScreen(config: config),
+        ),
+      );
+    } catch (e, stackTrace) {
+      debugPrint('Error loading config: $e');
+      debugPrint('Stack trace: $stackTrace');
+
+      if (!mounted) return;
+
       setState(() {
         _isLoading = false;
+        _errorMessage = 'حدث خطأ في تحميل الإعدادات. يرجى المحاولة مرة أخرى.';
       });
     }
   }
@@ -75,6 +87,14 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 width: 200,
                 height: 200,
                 fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  debugPrint('Error loading image: $error');
+                  return const Icon(
+                    Icons.image_not_supported,
+                    size: 100,
+                    color: Colors.grey,
+                  );
+                },
               ),
               const SizedBox(height: 30),
               if (_config != null)
@@ -88,13 +108,52 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   textAlign: TextAlign.center,
                 ),
               const SizedBox(height: 20),
-              if (_isLoading)
+              if (_isLoading && _errorMessage == null)
                 const SizedBox(
                   width: 30,
                   height: 30,
                   child: CircularProgressIndicator(
                     strokeWidth: 3,
                     valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1A7A9E)),
+                  ),
+                ),
+              if (_errorMessage != null)
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Colors.red,
+                      ),
+                      const SizedBox(height: 15),
+                      Text(
+                        _errorMessage!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            _errorMessage = null;
+                            _isLoading = true;
+                          });
+                          _loadConfigAndNavigate();
+                        },
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('إعادة المحاولة'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1A7A9E),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
             ],
