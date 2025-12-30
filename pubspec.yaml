@@ -1,0 +1,26 @@
+name: sky_property_app
+description: A minimal Flutter app that opens a configurable URL in a full-screen webview optimized for low-end devices.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_inappwebview: ^6.1.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/config.json
+    - assets/images/logo.png
