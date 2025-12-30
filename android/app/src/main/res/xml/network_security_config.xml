@@ -7,6 +7,6 @@
         </trust-anchors>
     </base-config>
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">skypropertyksa.com</domain>
+        <domain includeSubdomains="true">myprojectplatform.com</domain>
     </domain-config>
 </network-security-config>
