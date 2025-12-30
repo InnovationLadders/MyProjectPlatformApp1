@@ -1,4 +1,4 @@
-# MyProject Platform App
+e# MyProject Platform App
 
 A simple, reusable Flutter application that displays a splash screen and opens a configurable URL in a full-screen in-app browser. This app works seamlessly across iOS, Android, and desktop platforms.
 
@@ -21,8 +21,8 @@ Edit `assets/config.json`:
 
 ```json
 {
-  "appName": "SkyProperty",
-  "url": "https://myprojectplatform.com/projects"
+  "appName": "myprojectplatform",
+  "url": "https://myprojectplatform.com"
 }
 ```
 
