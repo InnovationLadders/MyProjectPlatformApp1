@@ -170,6 +170,6 @@ This project is open source and available for personal and commercial use.
 ## Test Configuration
 
 Current test setup:
-- **App Name**: Myprojectplarform
-- **URL**: https://myprojectplarform.com
+- **App Name**: Myprojectplatform
+- **URL**: https://myprojectplatform.com
 - **Logo**: logo.png
