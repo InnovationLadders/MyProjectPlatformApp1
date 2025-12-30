@@ -1,4 +1,4 @@
-name: sky_property_app
+name: my_projectplatform_app
 description: A minimal Flutter app that opens a configurable URL in a full-screen webview optimized for low-end devices.
 
 publish_to: 'none'
